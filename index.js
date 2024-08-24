@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-const express = require("express");
+const express = require('express');
 const app = express();
 const genres = require('./routes/genres');
 const home = require('./routes/home');
@@ -7,7 +7,7 @@ const movies = require('./routes/movies');
 const customers = require('./routes/customers');
 const rentals = require('./routes/rentals');
 
-mongoose.connect('mongodb://localhost/vidly')
+mongoose.connect('mongodb://127.0.0.1:27017/vidly')
 	.then(() => console.log('Connected to MongoDB...'))
 	.catch(err => console.log('Could not connect to MongoDB...', err));
 

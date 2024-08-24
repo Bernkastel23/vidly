@@ -13,7 +13,7 @@ router.get('/', async (req, res)=> {
 
 router.get('/:id', async (req, res)=>{
 	const rental = await Rental.findById(req.params.id);
-	if(!rental) return res.status(404).send('The rental with the given ID was not found.');
+	if(!rental) return res.status(404).send(`The rental with the ID: ${req.params.id} was not found.`);
 	res.send(rental);
 });
 
@@ -24,10 +24,10 @@ router.post('/', async (req, res) => {
 	if (error) return res.status(400).send(error.details[0].message);
 
 	const customer = await Customer.findById(req.body.customerId);
-	if (!customer) return res.status(400).send('The customer with the given ID was not found.');
+	if (!customer) return res.status(400).send(`The customer with the ID: ${req.body.customerId} was not found.`);
 
 	const movie = await Movie.findById(req.body.movieId);
-	if (!movie) return res.status(400).send('The movie with the given ID is not found.');
+	if (!movie) return res.status(400).send(`The movie with the ID: ${req.body.movieIdId} was not found.`);
 
 	if (movie.numberInStock === 0) return res.status(400).send('Movie out of stock!');
 	
@@ -44,12 +44,28 @@ router.post('/', async (req, res) => {
 		},
 	});
 
-	rental = await rental.save();
+	try {
+		const session = await mongoose.startSession();
+		await session.withTransaction(async () => {
+		  const result = await rental.save();
+		  movie.numberInStock--;
+		  movie.save();
+		  res.send(result);
+		});
+  
+		session.endSession();
+		console.log('Success');
+	} 
+	catch (error) {
+		console.log('Error!', error.message);
+	}
 
-	movie.numberInStock--;
-	movie.save();
+	// rental = await rental.save();
 
-	res.send(rental);
+	// movie.numberInStock--;
+	// movie.save();
+
+	// res.send(rental);
 });
 
 module.exports = router;
