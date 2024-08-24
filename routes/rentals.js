@@ -27,7 +27,7 @@ router.post('/', async (req, res) => {
 	if (!customer) return res.status(400).send(`The customer with the ID: ${req.body.customerId} was not found.`);
 
 	const movie = await Movie.findById(req.body.movieId);
-	if (!movie) return res.status(400).send(`The movie with the ID: ${req.body.movieIdId} was not found.`);
+	if (!movie) return res.status(400).send(`The movie with the ID: ${req.body.movieId} was not found.`);
 
 	if (movie.numberInStock === 0) return res.status(400).send('Movie out of stock!');
 	
