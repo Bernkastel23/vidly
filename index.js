@@ -1,4 +1,6 @@
 require('express-async-errors');
+const winston = require('winston');
+require('winston-mongodb');
 const error = require('./middleware/error');
 const config = require('config');
 const Joi = require("joi");
@@ -14,11 +16,19 @@ const rentals = require('./routes/rentals');
 const auth = require('./routes/auth');
 const users = require('./routes/users');
 
+winston.exceptions.handle(new winston.transports.File({filename: 'uncaughtExceptions.log'}));
+
+process.on('unhandledRejection', (ex) => {
+	throw ex;
+});
+
+winston.add(new winston.transports.File({filename: 'logfile.log'}));
+winston.add(new winston.transports.MongoDB({db: 'mongodb://localhost/vidly', level: 'info'}));
+
 if (!config.get('jwtPrivateKey')) {
 	console.error('FATAL ERROR: jwtPrivateKey is not defined.');
 	process.exit(1);
 }
-
 
 mongoose.connect('mongodb://127.0.0.1:27017/vidly')
 	.then(() => console.log('Connected to MongoDB...'))
@@ -32,7 +42,6 @@ app.use('/api/movies', movies);
 app.use('/api/rentals', rentals);
 app.use('/api/users', users);
 app.use('/api/auth', auth);
-
 
 app.use(error);
 
