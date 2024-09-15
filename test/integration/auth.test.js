@@ -5,6 +5,7 @@ const request = require('supertest');
 describe('auth middleware', () => {
 	beforeEach(() => { server = require('../../index'); });
 	afterEach(async () =>{ 
+		
 		await Genre.deleteMany({});
 		server.close(); 
 	});
