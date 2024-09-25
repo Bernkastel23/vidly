@@ -120,9 +120,9 @@ describe('/api/genres', ()=> {
 
 		const exec = async () => {
 			return await request(server)
-				.post('/api/genres' + id)
+				.put('/api/genres/' + id)
 				.set('x-auth-token', token)
-				.send({ newName });
+				.send({ name: newName });
 		};
 
 		beforeEach(async () => {
@@ -165,7 +165,7 @@ describe('/api/genres', ()=> {
 			expect(res.status).toBe(404);
 		});
 
-		it('should return 404 if genre with the given id was not found', async () => {
+		it('should return 404 if genre if the given id was not found', async () => {
 			id = new mongoose.Types.ObjectId();
 
 			const res = await exec();
@@ -194,7 +194,7 @@ describe('/api/genres', ()=> {
 
 		const exec = async () => {
 			return await request(server)
-				.post('/api/genres', + id)
+				.delete('/api/genres/' + id)
 				.set('x-auth-token', token)
 				.send();
 		};
