@@ -48,7 +48,6 @@ describe('/api/returns', () => {
 				title: '67890',
 				dailyRentalRate: 2
 			},
-			dateOut: new Date(2024, 9, 12)
 		})
 		await rental.save();
 	});
@@ -116,6 +115,7 @@ describe('/api/returns', () => {
 
 	it('it should calculate the rental fee', async () => {
 		rental.dateOut = moment().add(-7, 'days').toDate();
+		console.log(rental.dateOut);
 		await rental.save();
 
 		const res = await exec();
@@ -138,10 +138,7 @@ describe('/api/returns', () => {
 		
 		const rentalInDb = await Rental.findById(rental._id);
 
-		expect(res.body).toHaveProperty('dateOut');
-		expect(res.body).toHaveProperty('dateReturned');
-
-		//expect(Object.keys(res.body)).toEqual(expect.arrayContaining(['dateOut', 'dateReturned', 'rentalFee', 'customer', 'movie']));
+		expect(Object.keys(res.body)).toEqual(expect.arrayContaining(['dateOut', 'dateReturned', 'rentalFee', 'customer', 'movie']));
 	});
 
 })

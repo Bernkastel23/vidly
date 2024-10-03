@@ -5,7 +5,7 @@ const {Movie} = require('../models/movie');
 const express = require('express');
 const router = express.Router();
 const Joi = require('joi');
-const moment = require('moment');
+
 
 
 router.post('/', [auth, validate(validateReturn)], async (req, res) => {
@@ -16,14 +16,12 @@ router.post('/', [auth, validate(validateReturn)], async (req, res) => {
 	if (!rental) return res.status(404).send('Rental not found');
 	if (rental.dateReturned) return res.status(400).send('Rental is already processed.');
 
-	rental.dateReturned = new Date();
-	/*const rentalDays = moment().diff(rental.dateOut, 'days');
-	rental.rentalFee = rentalDays*rental.movie.dailyRentalRate;*/
+	rental.return();
 	await rental.save();
 
 	await Movie.updateOne({_id: rental.movie._id}, { $inc: {numberInStock: 1}});
 
-	res.send(rental);
+	return res.send(rental);
 });
 
 function validateReturn(req){
